@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="bg-gray-100w mb-5 p-5 dark:bg-gray-900">
+        <div class="container mx-auto px-5 flex">
+            <div class="flex-grow">
+                <h1 class="text-2xl mb-1 dark:text-white">{{ entry.description }}</h1>
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Created {{ entry.created_at|humanize_naturaltime() }}</div>
+            </div>
+
+            <div class="flex space-x-2">
+                <div>
+                    <a href="/{{ entry.id }}/edit" class="btn-primary">Edit</a>
+                </div>
+
+                <div>
+                    <form method="get" action="/{{ entry.id }}/delete">
+                        <button type="submit" class="btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-5">
+        <p>
+            {{ entry.render()|safe }}
+        </p>
+    </div>
+{% endblock content %}
