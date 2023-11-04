@@ -117,7 +117,7 @@ async def update_entry(
 
 
 @app.get("/{entry_id}/delete")
-def get_entry(entry_id: int, db: Session = Depends(get_db)):
+def delete_entry(entry_id: int, db: Session = Depends(get_db)):
     entry = crud.get_entry(db, entry_id=entry_id)
     if not entry:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
