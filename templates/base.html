@@ -37,18 +37,22 @@
         </div>
 
         <div class="w-96">
-          <form method="get" action="/entries?q={{ query }}">
-            <input
-              type="text"
-              name="q"
-              placeholder="Search all your gists"
-              value="{{ query }}"
-            />
-          </form>
+          <input
+            type="text"
+            name="query"
+            placeholder="Search all your gists"
+            hx-get="/entries?htmx=true"
+            hx-include="[name='query']"
+            hx-target="#search-results"
+            hx-trigger="keyup changed delay:500ms"
+            hx-params="*"
+          />
         </div>
       </div>
     </div>
 
-    <div>{% block content %} {% endblock content %}</div>
+    <div id="search-results">{% block content %} {% endblock content %}</div>
+
+    <script src="{{ url_for('static', path='/js/htmx.org@1.9.10') }}"></script>
   </body>
 </html>

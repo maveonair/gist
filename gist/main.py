@@ -45,14 +45,19 @@ def get_root(request: Request, db: Session = Depends(get_db)):
 @app.get("/entries")
 def get_entries(
     request: Request,
-    q: str = "",
+    htmx: bool = False,
+    query: str = "",
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
-    entries = crud.get_entries(db, query=q, skip=skip, limit=limit)
+    template = "entries/index.html"
+    if htmx:
+        template = "entries/_entries.html"
+
+    entries = crud.get_entries(db, query=query, skip=skip, limit=limit)
     return templates.TemplateResponse(
-        "entries.html", {"request": request, "entries": entries}
+        template, {"request": request, "entries": entries}
     )
 
 
@@ -69,7 +74,7 @@ async def create_entry(
     else:
         recent_entries = crud.get_recent_entries(db)
         return templates.TemplateResponse(
-            "index.html",
+            "entries/index.html",
             {"request": request, "entries": recent_entries, "form": form},
         )
 
@@ -81,7 +86,7 @@ def get_entry(request: Request, entry_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     return templates.TemplateResponse(
-        "entry.html", {"request": request, "entry": entry}
+        "entries/show.html", {"request": request, "entry": entry}
     )
 
 
@@ -94,7 +99,7 @@ def edit_entry(request: Request, entry_id: int, db: Session = Depends(get_db)):
 
     form = forms.EntryEditForm(request=request, db=db, entry_id=entry_id)
     return templates.TemplateResponse(
-        "edit_entry.html", {"request": request, "form": form}
+        "entries/edit.html", {"request": request, "form": form}
     )
 
 
@@ -111,7 +116,7 @@ async def update_entry(
         )
     else:
         return templates.TemplateResponse(
-            "edit_entry.html",
+            "entries/edit.html",
             {"request": request, "form": form},
         )
 
