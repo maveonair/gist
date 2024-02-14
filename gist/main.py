@@ -121,11 +121,18 @@ async def update_entry(
         )
 
 
-@app.get("/{entry_id}/delete")
-def delete_entry(entry_id: int, db: Session = Depends(get_db)):
+@app.delete("/{entry_id}")
+def delete_entry(
+    request: Request,
+    entry_id: int,
+    db: Session = Depends(get_db),
+):
     entry = crud.get_entry(db, entry_id=entry_id)
     if not entry:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     crud.delete_entry(db, entry=entry)
-    return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+    response = templates.TemplateResponse("index.html", {"request": request})
+    response.headers["hx-redirect"] = "/"
+    return response

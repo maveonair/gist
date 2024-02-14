@@ -16,9 +16,14 @@
       </div>
 
       <div>
-        <form method="get" action="/{{ entry.id }}/delete">
-          <button type="submit" class="btn-danger">Delete</button>
-        </form>
+        <button
+          hx-confirm="Are you sure you want to delete this entry?"
+          hx-delete="/{{ entry.id }}"
+          hx-swap="none"
+          class="btn-danger"
+        >
+          Delete
+        </button>
       </div>
     </div>
   </div>

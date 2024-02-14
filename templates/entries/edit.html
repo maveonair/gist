@@ -12,9 +12,14 @@
 
     <div class="flex space-x-2">
       <div>
-        <form method="get" action="/{{ form.entry_id }}/delete">
-          <button type="submit" class="btn-danger">Delete</button>
-        </form>
+        <button
+          hx-confirm="Are you sure you want to delete this entry?"
+          hx-delete="/{{ form.entry_id }}"
+          hx-swap="none"
+          class="btn-danger"
+        >
+          Delete
+        </button>
       </div>
     </div>
   </div>
