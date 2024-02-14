@@ -1,11 +1,11 @@
-from fastapi import Depends, FastAPI, Request, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from . import crud, models, forms
+from . import crud, forms, models
 from .database import SessionLocal, engine
 
 templates = Jinja2Templates(
@@ -35,17 +35,17 @@ async def custom_404_handler(request, __):
 
 
 @app.get("/")
-def get_entries(request: Request, db: Session = Depends(get_db)):
+def get_root(request: Request, db: Session = Depends(get_db)):
     recent_entries = crud.get_recent_entries(db)
     return templates.TemplateResponse(
-        "index.html", {"request": request, "entries": recent_entries.all()}
+        "index.html", {"request": request, "entries": recent_entries}
     )
 
 
 @app.get("/entries")
 def get_entries(
     request: Request,
-    q: str = None,
+    q: str = "",
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -70,7 +70,7 @@ async def create_entry(
         recent_entries = crud.get_recent_entries(db)
         return templates.TemplateResponse(
             "index.html",
-            {"request": request, "entries": recent_entries.all(), "form": form},
+            {"request": request, "entries": recent_entries, "form": form},
         )
 
 

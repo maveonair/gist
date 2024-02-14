@@ -1,56 +1,67 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div
+  class="bg-gray-100 flex justify-center mb-5 dark:bg-black-700 dark:border-b dark:border-black-600"
+>
+  {% for entry in entries %}
+  <div class="p-3 flex">
+    <a href="/{{ entry.id }}" class=""
+      >{{ entry.description|truncate(15, True) }}
+    </a>
+  </div>
+  {% endfor %} {% if entries|length > 0 %}
+  <div class="ml-10 p-3">
+    <a href="/entries" class="color-blue-500">View your gists</a>
+  </div>
+  {% else %}
+  <div class="p-3">Welcome to gist! Start creating your first gist.</div>
+  {% endif %}
+</div>
 
-{% block content %}
-    <div class="bg-gray-100 flex justify-center mb-5 dark:bg-gray-900">
-        {% for entry in entries %}
-            <div class="p-3 flex">
-                <a href="/{{ entry.id }}" class="">{{ entry.description|truncate(15, True) }} </a>
-            </div>
-        {% endfor %}
-
-        {% if entries|length > 0 %}
-            <div class="ml-10 p-3">
-                <a href="/entries" class="color-blue-500">View your gists</a>
-            </div>
-        {% else %}
-            <div class="p-3">
-                Welcome to gist! Start creating your first gist.
-            </div>
-        {% endif %}
+<div class="container mx-auto px-5">
+  <form method="post" action="/entries">
+    <div class="mb-2">
+      {% if form %} {% if form.errors["description"] %}
+      <input
+        type="text"
+        name="description"
+        value="{{ form.description }}"
+        placeholder="Description"
+        class="!border-red-600"
+      />
+      <span class="text-sm text-red-600">{{ form.errors["description"] }}</span>
+      {% else %}
+      <input
+        type="text"
+        name="description"
+        value="{{ form.description }}"
+        placeholder="Description"
+      />
+      {% endif %} {% else %}
+      <input type="text" name="description" placeholder="Description" />
+      {% endif %}
     </div>
 
-    <div class="container mx-auto px-5">
-        <form method="post" action="/entries">
-            <div class="mb-2">
-                {% if form %}
-                    {% if form.errors["description"] %}
-                        <input type="text" name="description" value="{{ form.description }}" placeholder="Description"
-                               class="!border-red-600"/>
-                        <span class="text-sm text-red-600">{{ form.errors["description"] }}</span>
-                    {% else %}
-                        <input type="text" name="description" value="{{ form.description }}" placeholder="Description"/>
-                    {% endif %}
-                {% else %}
-                    <input type="text" name="description" placeholder="Description"/>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                {% if form %}
-                    {% if form.errors["content"] %}
-                        <textarea rows="10" name="content" placeholder="Content"
-                                  class="!border-red-600">{{ form.content }}</textarea>
-                        <span class="text-sm text-red-600">{{ form.errors["content"] }}</span>
-                    {% else %}
-                        <textarea rows="10" name="content" placeholder="Content">{{ form.content }}</textarea>
-                    {% endif %}
-                {% else %}
-                    <textarea rows="10" name="content" placeholder="Content"></textarea>
-                {% endif %}
-
-            </div>
-
-            <button type="submit" class="btn-primary">Create</button>
-        </form>
+    <div class="mb-3">
+      {% if form %} {% if form.errors["content"] %}
+      <textarea
+        rows="10"
+        name="content"
+        placeholder="Content"
+        class="!border-red-600"
+      >
+{{ form.content }}</textarea
+      >
+      <span class="text-sm text-red-600">{{ form.errors["content"] }}</span>
+      {% else %}
+      <textarea rows="10" name="content" placeholder="Content">
+{{ form.content }}</textarea
+      >
+      {% endif %} {% else %}
+      <textarea rows="10" name="content" placeholder="Content"></textarea>
+      {% endif %}
     </div>
+
+    <button type="submit" class="btn-primary">Create</button>
+  </form>
+</div>
 {% endblock content %}

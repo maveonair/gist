@@ -164,5 +164,4 @@ static/css/main.css
 
 # Sqlite
 *.db
-
-
+*.db-*

@@ -1,25 +1,27 @@
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
 from . import models, schemas
 
 
-def entry_exists(db: Session, description: str, entry_id: int = None) -> bool:
+def entry_exists(db: Session, description: str, entry_id: int) -> bool:
     entry = (
         db.query(models.Entry).filter(models.Entry.description == description).first()
     )
 
-    return entry is not None and entry.id != entry_id
+    return entry is not None and entry.id != entry_id  # type: ignore
 
 
-def get_recent_entries(db: Session) -> [models.Entry]:
-    return db.query(models.Entry).order_by(models.Entry.updated_at.desc()).limit(5)
+def get_recent_entries(db: Session) -> list[models.Entry]:
+    return (
+        db.query(models.Entry).order_by(models.Entry.updated_at.desc()).limit(5).all()
+    )
 
 
 def get_entries(
-    db: Session, query: str = None, skip: int = 0, limit: int = 100
-) -> [models.Entry]:
+    db: Session, query: str = "", skip: int = 0, limit: int = 100
+) -> list[models.Entry]:
     if query is None:
         return (
             db.query(models.Entry)
@@ -61,9 +63,9 @@ def create_entry(db: Session, entry: schemas.EntryCreate) -> models.Entry:
 
 def edit_entry(db: Session, entry: schemas.Entry) -> models.Entry:
     db_entry = db.query(models.Entry).filter(models.Entry.id == entry.id).first()
-    db_entry.description = entry.description
-    db_entry.content = entry.content
-    db_entry.updated_at = datetime.now(UTC).astimezone()
+    db_entry.description = entry.description  # type: ignore
+    db_entry.content = entry.content  # type: ignore
+    db_entry.updated_at = datetime.now(UTC).astimezone()  # type: ignore
     db.commit()
     db.refresh(db_entry)
     return db_entry
