@@ -74,7 +74,7 @@ async def create_entry(
     else:
         recent_entries = crud.get_recent_entries(db)
         return templates.TemplateResponse(
-            "entries/index.html",
+            "index.html",
             {"request": request, "entries": recent_entries, "form": form},
         )
 
