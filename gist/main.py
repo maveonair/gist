@@ -45,20 +45,36 @@ def get_root(request: Request, db: Session = Depends(get_db)):
 @app.get("/entries")
 def get_entries(
     request: Request,
-    htmx: bool = False,
     query: str = "",
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
-    template = "entries/index.html"
-    if htmx:
-        template = "entries/_entries.html"
-
     entries = crud.get_entries(db, query=query, skip=skip, limit=limit)
     return templates.TemplateResponse(
-        template, {"request": request, "entries": entries}
+        "entries/index.html", {"request": request, "entries": entries, "query": query}
     )
+
+
+@app.get("/entries/autocomplete")
+def search_entries(
+    request: Request,
+    query: str,
+    db: Session = Depends(get_db),
+):
+    if "HX-Request" in request.headers:
+        hasQuery = True if len(query) > 0 else False
+        entries = crud.get_entries(db, query=query, limit=5)
+        return templates.TemplateResponse(
+            "entries/search_results.html",
+            {
+                "request": request,
+                "hasQuery": hasQuery,
+                "entries": entries,
+            },
+        )
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
 
 @app.post("/entries")

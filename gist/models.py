@@ -1,5 +1,5 @@
 import markdown2
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, DateTime, Integer, String, Text
 
 from .database import Base
 
