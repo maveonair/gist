@@ -48,6 +48,20 @@ def get_entry(db: Session, entry_id: int) -> models.Entry:
     return db.query(models.Entry).filter(models.Entry.id == entry_id).first()
 
 
+def count_entries(db: Session, query: str = "") -> int:
+    if query is None:
+        return db.query(models.Entry).count()
+
+    return (
+        db.query(models.Entry)
+        .filter(
+            models.Entry.description.ilike(f"%{query}%")
+            | models.Entry.content.ilike(f"%{query}%")
+        )
+        .count()
+    )
+
+
 def create_entry(db: Session, entry: schemas.EntryCreate) -> models.Entry:
     db_entry = models.Entry(
         description=entry.description,

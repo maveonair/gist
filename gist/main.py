@@ -47,13 +47,26 @@ def get_entries(
     request: Request,
     query: str = "",
     skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
 ):
-    entries = crud.get_entries(db, query=query, skip=skip, limit=limit)
-    return templates.TemplateResponse(
-        "entries/index.html", {"request": request, "entries": entries, "query": query}
-    )
+    default_limit = 5
+
+    entries = crud.get_entries(db, query=query, skip=skip, limit=default_limit)
+    has_more_entries = crud.count_entries(db, query=query) > skip + default_limit
+
+    context = {
+        "request": request,
+        "entries": entries,
+        "query": query,
+        "skip": skip,
+        "limit": default_limit,
+        "has_more_entries": has_more_entries,
+    }
+
+    if "HX-Request" in request.headers:
+        return templates.TemplateResponse("entries/_entries.html", context=context)
+
+    return templates.TemplateResponse("entries/index.html", context=context)
 
 
 @app.get("/entries/autocomplete")
